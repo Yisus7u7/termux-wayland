@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         kbd = findViewById(R.id.additionalKbd);
 	frm = findViewById(R.id.frame);
 
+	extraKeysView.setExtraKeysViewClient(new TerminalExtraKeys(LorieService.getOnKeyListener()));
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             getWindow().
              getDecorView().
