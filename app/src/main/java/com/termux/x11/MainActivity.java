@@ -18,6 +18,7 @@ import android.widget.Toast;
 import android.widget.FrameLayout;
 import com.termux.shared.terminal.io.extrakeys.ExtraKeysView;
 import com.termux.x11.TermuxAppSharedProperties;
+import com.termux.x11.TerminalExtraKeys;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         kbd = findViewById(R.id.additionalKbd);
 	frm = findViewById(R.id.frame);
 
-	extraKeysView.setExtraKeysViewClient(new TerminalExtraKeys(LorieService.getOnKeyListener()));
+	extraKeysView.setExtraKeysViewClient(new TerminalExtraKeys(LorieService.getOnKeyListener(), this));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             getWindow().

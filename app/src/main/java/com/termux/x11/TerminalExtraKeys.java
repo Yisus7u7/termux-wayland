@@ -12,6 +12,9 @@ import android.content.Context;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.view.KeyEvent;
+import android.view.KeyCharacterMap;
+import android.text.TextUtils;
+import android.app.ActivityManager;
 
 import java.lang.Character;
 
@@ -27,9 +30,11 @@ import static com.termux.shared.terminal.io.extrakeys.ExtraKeysConstants.PRIMARY
 public class TerminalExtraKeys implements ExtraKeysView.IExtraKeysView {
 
     private final View.OnKeyListener mEventListener;
+    private final MainActivity act;
 
-    public TerminalExtraKeys(@NonNull View.OnkeyListener eventlistener) {
+    public TerminalExtraKeys(@NonNull View.OnKeyListener eventlistener, MainActivity mact) {
         mEventListener = eventlistener;
+	act = mact;
     }
 
     SurfaceView lorieView = findViewById(R.id.lorieView);
@@ -87,7 +92,7 @@ public class TerminalExtraKeys implements ExtraKeysView.IExtraKeysView {
                     if (events != null) {
                         for (KeyEvent event : events) {
 			    Integer keyCode = event.getKeyCode();
-			    mEventListener.onKey(lorieView, keyCode, keyEvent);
+			    mEventListener.onKey(lorieView, keyCode, event);
 			}
 		    }
             });
@@ -100,7 +105,6 @@ public class TerminalExtraKeys implements ExtraKeysView.IExtraKeysView {
     }
 
     @SuppressLint("RtlHardcoded")
-    @Override
     public void onTerminalExtraKeyButtonClick(View view, String key, boolean ctrlDown, boolean altDown, boolean shiftDown, boolean fnDown) {
         if ("KEYBOARD".equals(key)) {
 
@@ -113,21 +117,20 @@ public class TerminalExtraKeys implements ExtraKeysView.IExtraKeysView {
 	     Intent preferencesIntent = new Intent(getApplicationContext(), LoriePreferences.class);
              preferencesIntent.setAction(ACTION_START_PREFERENCES_ACTIVITY);
 
-	     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
              PendingIntent pendingPreferencesIntent = PendingIntent.getActivity(getApplicationContext(), 0, preferencesIntent, 0);
 
         } else if ("PASTE".equals(key)) {
 
-	    ClipboardManager clipboard = (ClipboardManager) mActivity.getSystemService(Context.CLIPBOARD_SERVICE);
+	    ClipboardManager clipboard = (ClipboardManager) act.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = clipboard.getPrimaryClip();
 
 	    if (clipData != null) {
-            	CharSequence paste = clipData.getItemAt(0).coerceToText(mActivity);
+            	CharSequence paste = clipData.getItemAt(0).coerceToText(act);
             	if (!TextUtils.isEmpty(paste)) lorieView.paste(paste.toString());
             }
 
         } else {
-            super.onTerminalExtraKeyButtonClick(view, key, ctrlDown, altDown, shiftDown, fnDown);
+            onTerminalExtraKeyButtonClick(view, key, ctrlDown, altDown, shiftDown, fnDown);
         }
     }
 
